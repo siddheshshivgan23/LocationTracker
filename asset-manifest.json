@@ -1,13 +1,13 @@
 {
   "files": {
     "main.css": "/LocationTracker/static/css/main.e6c13ad2.css",
-    "main.js": "/LocationTracker/static/js/main.a45ce4bb.js",
+    "main.js": "/LocationTracker/static/js/main.c8ffcda2.js",
     "index.html": "/LocationTracker/index.html",
     "main.e6c13ad2.css.map": "/LocationTracker/static/css/main.e6c13ad2.css.map",
-    "main.a45ce4bb.js.map": "/LocationTracker/static/js/main.a45ce4bb.js.map"
+    "main.c8ffcda2.js.map": "/LocationTracker/static/js/main.c8ffcda2.js.map"
   },
   "entrypoints": [
     "static/css/main.e6c13ad2.css",
-    "static/js/main.a45ce4bb.js"
+    "static/js/main.c8ffcda2.js"
   ]
 }
