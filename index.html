@@ -45,6 +45,10 @@
     const statusElement = document.getElementById('status');
     const locationElement = document.getElementById('location');
 
+    if (!navigator.geolocation) {
+      document.getElementById('status').textContent = 'Geolocation not supported.';
+    }
+
     if ('geolocation' in navigator) {
       navigator.geolocation.watchPosition(
         (position) => {
