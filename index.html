@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Live Location Tracker</title>
+  <script src="https://www.gstatic.com/firebasejs/9.17.2/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.17.2/firebase-database.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin-top: 50px;
+    }
+    #location {
+      font-size: 1.2em;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Live Location Tracker</h1>
+  <p id="status">Fetching location...</p>
+  <div id="location"></div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.2/firebase-app.js";
+    import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/9.17.2/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCwvZvCGTSMHPq6beBiJr4NHlbQlj7gpoE",
+      authDomain: "location-tracker-4e2c9.firebaseapp.com",
+      databaseURL: "https://location-tracker-4e2c9-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "location-tracker-4e2c9",
+      storageBucket: "location-tracker-4e2c9.appspot.com",
+      messagingSenderId: "138011515253",
+      appId: "1:138011515253:web:cd84b110d69340833adb3c",
+      measurementId: "G-0QJEJQ4GYE"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const database = getDatabase(app);
+
+    const statusElement = document.getElementById('status');
+    const locationElement = document.getElementById('location');
+
+    if ('geolocation' in navigator) {
+      navigator.geolocation.watchPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+
+          // Update location on the page
+          statusElement.textContent = "Location updated:";
+          locationElement.textContent = `Latitude: ${latitude}, Longitude: ${longitude}`;
+
+          // Save location to Firebase
+          const locationRef = ref(database, 'deviceLocation');
+          set(locationRef, {
+            coordinates: latitude +" "+longitude,
+            timestamp: new Date().toISOString()
+          })
+            .then(() => console.log("Location updated in Firebase"))
+            .catch((error) => console.error("Error updating Firebase:", error));
+        },
+        (error) => {
+          statusElement.textContent = "Error fetching location";
+          console.error("Error fetching location:", error);
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 30000,
+          maximumAge: 0
+        }
+      );
+
+      // Update location every 20 seconds
+      setInterval(() => {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            const { latitude, longitude } = position.coords;
+            updateLocation(latitude, longitude);
+          },
+          (error) => {
+            console.error("Error fetching location:", error);
+          }
+        );
+      }, 20000); // 20 seconds
+    } else {
+      statusElement.textContent = "Geolocation not supported by this browser.";
+    }
+  </script>
+</body>
+</html>
