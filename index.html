@@ -27,6 +27,21 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.2/firebase-app.js";
     import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/9.17.2/firebase-database.js";
 
+    const firebaseConfig = {
+      apiKey: "AIzaSyCwvZvCGTSMHPq6beBiJr4NHlbQlj7gpoE",
+      authDomain: "location-tracker-4e2c9.firebaseapp.com",
+      databaseURL: "https://location-tracker-4e2c9-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "location-tracker-4e2c9",
+      storageBucket: "location-tracker-4e2c9.appspot.com",
+      messagingSenderId: "138011515253",
+      appId: "1:138011515253:web:cd84b110d69340833adb3c",
+      measurementId: "G-0QJEJQ4GYE"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const database = getDatabase(app);
+
     const statusElement = document.getElementById('status');
     const locationElement = document.getElementById('location');
 
@@ -35,7 +50,7 @@
     }
 
     if ('geolocation' in navigator) {
-      navigator.geolocation.watchPosition(
+      navigator.geolocation.getCurrentPosition(
         (position) => {
           const { latitude, longitude } = position.coords;
 
@@ -43,20 +58,6 @@
           statusElement.textContent = "Location updated:";
           locationElement.textContent = `Latitude: ${latitude}, Longitude: ${longitude}`;
 
-          const firebaseConfig = {
-            apiKey: "AIzaSyCwvZvCGTSMHPq6beBiJr4NHlbQlj7gpoE",
-            authDomain: "location-tracker-4e2c9.firebaseapp.com",
-            databaseURL: "https://location-tracker-4e2c9-default-rtdb.asia-southeast1.firebasedatabase.app",
-            projectId: "location-tracker-4e2c9",
-            storageBucket: "location-tracker-4e2c9.appspot.com",
-            messagingSenderId: "138011515253",
-            appId: "1:138011515253:web:cd84b110d69340833adb3c",
-            measurementId: "G-0QJEJQ4GYE"
-          };
-
-          // Initialize Firebase
-          const app = initializeApp(firebaseConfig);
-          const database = getDatabase(app);
           // Save location to Firebase
           const locationRef = ref(database, 'deviceLocation');
           set(locationRef, {
