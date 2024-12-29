@@ -30,49 +30,50 @@
     const statusElement = document.getElementById('status');
     const locationElement = document.getElementById('location');
 
-    if (!navigator.geolocation) {
-      document.getElementById('status').textContent = 'Geolocation not supported.';
+    const firebaseConfig = {
+      apiKey: "AIzaSyCwvZvCGTSMHPq6beBiJr4NHlbQlj7gpoE",
+      authDomain: "location-tracker-4e2c9.firebaseapp.com",
+      databaseURL: "https://location-tracker-4e2c9-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "location-tracker-4e2c9",
+      storageBucket: "location-tracker-4e2c9.appspot.com",
+      messagingSenderId: "138011515253",
+      appId: "1:138011515253:web:cd84b110d69340833adb3c",
+      measurementId: "G-0QJEJQ4GYE"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const database = getDatabase(app);
+
+    // Function to update location in Firebase
+    function updateLocation(latitude, longitude) {
+      const locationRef = ref(database, 'deviceLocation');
+      set(locationRef, {
+        coordinates: `${latitude}, ${longitude}`,
+        timestamp: new Date().toISOString()
+      })
+        .then(() => console.log("Location updated in Firebase"))
+        .catch((error) => console.error("Error updating Firebase:", error));
     }
 
+    // Check if geolocation is available
     if ('geolocation' in navigator) {
+      statusElement.textContent = "Requesting location...";
+
+      // Request initial location
       navigator.geolocation.getCurrentPosition(
         (position) => {
           const { latitude, longitude } = position.coords;
-
-          // Update location on the page
           statusElement.textContent = "Location updated:";
           locationElement.textContent = `Latitude: ${latitude}, Longitude: ${longitude}`;
-
-          const firebaseConfig = {
-            apiKey: "AIzaSyCwvZvCGTSMHPq6beBiJr4NHlbQlj7gpoE",
-            authDomain: "location-tracker-4e2c9.firebaseapp.com",
-            databaseURL: "https://location-tracker-4e2c9-default-rtdb.asia-southeast1.firebasedatabase.app",
-            projectId: "location-tracker-4e2c9",
-            storageBucket: "location-tracker-4e2c9.appspot.com",
-            messagingSenderId: "138011515253",
-            appId: "1:138011515253:web:cd84b110d69340833adb3c",
-            measurementId: "G-0QJEJQ4GYE"
-          };
-
-          // Initialize Firebase
-          const app = initializeApp(firebaseConfig);
-          const database = getDatabase(app);
-
-          // Save location to Firebase
-          const locationRef = ref(database, 'deviceLocation');
-          set(locationRef, {
-            coordinates: latitude +" "+longitude,
-            timestamp: new Date().toISOString()
-          })
-            .then(() => console.log("Location updated in Firebase"))
-            .catch((error) => console.error("Error updating Firebase:", error));
+          updateLocation(latitude, longitude);
         },
         (error) => {
           statusElement.textContent = "Error fetching location";
           console.error("Error fetching location:", error);
         },
         {
-          enableHighAccuracy: false,
+          enableHighAccuracy: true,
           timeout: 30000,
           maximumAge: 0
         }
